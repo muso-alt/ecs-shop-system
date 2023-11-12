@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 51bc62ff6312440ca203469781c61af0, type: 3}
+  m_Name: ItemsData
+  m_EditorClassIdentifier: 
+  _view: {fileID: 5313775137053661687, guid: 244381b8b9f59614abfbb4a50fd88073, type: 3}
+  _items:
+  - _name: Tango
+    _price: 65
+  - _name: Iron branch
+    _price: 50
