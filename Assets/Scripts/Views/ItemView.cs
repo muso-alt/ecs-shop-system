@@ -1,6 +1,9 @@
-﻿using TMPro;
+﻿using Leopotam.EcsLite;
+using ShopComplex.Components;
+using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
+using UnityEngine.UIElements;
+using Button = UnityEngine.UI.Button;
 
 namespace ShopComplex.Views
 {
@@ -10,6 +13,9 @@ namespace ShopComplex.Views
         [SerializeField] private TMP_Text _costText;
         [SerializeField] private Button _buyButton;
 
+        public EcsPackedEntityWithWorld PackedEntityWithWorld { get; set; }
+        public EcsWorld EcsEventWorld { get; set; }
+        
         private void Awake()
         {
             _buyButton.onClick.AddListener(SendClickedEvent);
@@ -32,7 +38,9 @@ namespace ShopComplex.Views
         
         private void SendClickedEvent()
         {
-            Debug.Log("Clicked");
+            var entity = EcsEventWorld.NewEntity();
+            ref var eventComponent = ref EcsEventWorld.GetPool<ClickEvent<ItemView>>().Add(entity);
+            eventComponent.view = this;
         }
     }
 }

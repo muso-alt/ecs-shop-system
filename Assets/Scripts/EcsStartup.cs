@@ -21,6 +21,8 @@ namespace ShopComplex
 
             _systems = new EcsSystems(_world);
             _systems.Add(new ShopInitSystem());
+            _systems.Add(new HandleClickSystem());
+            _systems.AddWorld(new EcsWorld(), "events");
             _systems.Inject(_items);
             _systems.Inject(_panelView);
             _systems.Init();
@@ -28,7 +30,7 @@ namespace ShopComplex
 
         private void Update()
         {
-            _systems.Run();
+            _systems?.Run();
         }
 
         private void OnDestroy()
