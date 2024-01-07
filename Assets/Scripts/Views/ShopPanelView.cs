@@ -1,11 +1,8 @@
-﻿using UnityEngine;
-
+﻿
 namespace ShopComplex.Views
 {
-    public class ShopPanelView : MonoBehaviour
+    public class ShopPanelView : BaseView
     {
-        [SerializeField] private Transform _content;
-
-        public Transform Content => _content;
+        
     }
 }
