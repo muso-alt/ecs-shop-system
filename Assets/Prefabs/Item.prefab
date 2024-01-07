@@ -65,6 +65,7 @@ MonoBehaviour:
   _nameText: {fileID: 8532448505957980001}
   _costText: {fileID: 7665060659867854561}
   _buyButton: {fileID: 841465426965046423}
+  _rect: {fileID: 6515421046633485942}
 --- !u!114 &3879268813646797892
 MonoBehaviour:
   m_ObjectHideFlags: 0

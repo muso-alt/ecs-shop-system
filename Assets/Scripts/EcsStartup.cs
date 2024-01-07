@@ -11,6 +11,9 @@ namespace ShopComplex
     {
         [SerializeField] private ItemsData _items;
         [SerializeField] private ShopPanelView _panelView;
+        [SerializeField] private InventoryView _inventoryView;
+        [SerializeField] private FastBuyView _fastBuyView;
+        [SerializeField] private Transform _canvasParent;
         
         private EcsWorld _world;
         private IEcsSystems _systems;
@@ -18,13 +21,22 @@ namespace ShopComplex
         private void Awake()
         {
             _world = new EcsWorld();
-
+            
             _systems = new EcsSystems(_world);
-            _systems.Add(new ShopInitSystem());
+            
+            _systems.Add(new StartSystem());
+            
             _systems.Add(new HandleClickSystem());
-            _systems.AddWorld(new EcsWorld(), "events");
+            _systems.Add(new DragSystem());
+            
+            _systems.AddWorld(new EcsWorld(), "events");  
+            
             _systems.Inject(_items);
             _systems.Inject(_panelView);
+            _systems.Inject(_inventoryView);
+            _systems.Inject(_fastBuyView);
+            _systems.Inject(_canvasParent);
+            
             _systems.Init();
         }
 

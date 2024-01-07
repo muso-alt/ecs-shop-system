@@ -1,11 +1,8 @@
-using UnityEngine;
 
 namespace ShopComplex.Views
 {
-    public class InventoryView : MonoBehaviour
+    public class InventoryView : BaseView
     {
-        [SerializeField] private Transform _content;
-
-        public Transform Content => _content;
+        
     }
 }
