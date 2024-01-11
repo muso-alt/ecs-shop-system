@@ -1,7 +1,7 @@
 ﻿
 namespace ShopComplex.Views
 {
-    public class ShopPanelView : BaseView
+    public class ShopPanelView : BasePanelView
     {
         
     }
