@@ -37,6 +37,7 @@ namespace ShopComplex.Systems
             {
                 var pool = _dragBeginFilter.Pools.Inc1;
                 ref var dragEvent = ref pool.Get(entity);
+                
                 var itemView = dragEvent.View;
             
                 pool.Del(entity);
@@ -47,16 +48,24 @@ namespace ShopComplex.Systems
                 }
                 
                 var itemPool = world.GetPool<ItemCmp>();
+                
                 ref var itemCmp = ref itemPool.Get(itemEntity);
-
+                
+                if (itemCmp.ItemPlace == Place.FastBuy)
+                {
+                    continue;
+                }
+                
                 _activeDragItem = _itemPool.GetItem(itemCmp, _canvasParent.Value);
+
+                _activeDragItem.name = "Draggable";
 
                 var newPosition = Input.mousePosition;
                 newPosition.z = 0;
                 _activeDragItem.Rect.position = newPosition;
             }
 
-            if (_activeDragItem == null)
+            if (_activeDragItem is null)
             {
                 return;
             }
@@ -79,28 +88,45 @@ namespace ShopComplex.Systems
                 }
                 
                 var itemPool = world.GetPool<ItemCmp>();
+                
                 ref var itemCmp = ref itemPool.Get(itemEntity);
-                
-                if (IsInsideParent())
+
+                if (itemCmp.ItemPlace == Place.FastBuy)
                 {
-                    var view = _itemPool.GetItem(itemCmp, _fastBuyView.Value.Content);
+                    continue;
+                }
+
+                if (_activeDragItem is null)
+                {
+                    continue;
+                }
                 
-                    view.EcsEventWorld = _eventWorld.Value;
-                    view.PackedEntityWithWorld = _defaultWorld.Value.PackEntityWithWorld(entity);
+                if (_activeDragItem.Rect.IsInsideOtherRect(_fastBuyView.Value.Content) &&
+                    itemCmp.ItemPlace == Place.Market)
+                {
+                    CreateNewEntity(itemCmp);
                 }
                 
                 Object.Destroy(_activeDragItem.gameObject);
+                
                 _activeDragItem = null;
             }
         }
- 
-        private bool IsInsideParent()
-        {
-            var childCorners = new Vector3[4];
-            _activeDragItem.Rect.GetWorldCorners(childCorners);
 
-            return childCorners.All(corner =>
-                RectTransformUtility.RectangleContainsScreenPoint(_fastBuyView.Value.Content, corner));
+        private void CreateNewEntity(ItemCmp baseCmp)
+        {
+            var itemEntity = _defaultWorld.Value.NewEntity();
+            
+            ref var itemCmp = ref itemEntity.ConfigureItemEntity(_defaultWorld.Value);
+            
+            itemCmp.Cost = baseCmp.Cost;
+            itemCmp.Name = baseCmp.Name;
+            itemCmp.ItemPlace = Place.FastBuy;
+
+            var view = _itemPool.GetItem(itemCmp, _fastBuyView.Value.Content);
+                
+            view.EcsEventWorld = _eventWorld.Value;
+            view.PackedEntityWithWorld = _defaultWorld.Value.PackEntityWithWorld(itemEntity);
         }
     }
 }

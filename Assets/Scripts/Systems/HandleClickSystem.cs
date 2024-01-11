@@ -1,11 +1,10 @@
-﻿using System;
-using Leopotam.EcsLite;
+﻿using Leopotam.EcsLite;
 using Leopotam.EcsLite.Di;
 using ShopComplex.Components;
 using ShopComplex.Data;
 using ShopComplex.Tools;
 using ShopComplex.Views;
-using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace ShopComplex.Systems
 {
@@ -41,14 +40,38 @@ namespace ShopComplex.Systems
                 var itemPool = world.GetPool<ItemCmp>();
                 ref var itemCmp = ref itemPool.Get(itemEntity);
 
-                Debug.Log("Clicked: " + itemCmp.Name);
-                Debug.Log("Item cost: " + itemCmp.Cost);
-
-                var view = _itemPool.GetItem(itemCmp, _inventoryView.Value.Content);
+                if (itemCmp.ItemPlace != Place.Inventory)
+                {
+                    CreateNewEntity(itemCmp);
+                }
                 
-                view.EcsEventWorld = _eventWorld.Value;
-                view.PackedEntityWithWorld = _defaultWorld.Value.PackEntityWithWorld(entity);
+                if (itemCmp.ItemPlace == Place.FastBuy)
+                {
+                    Object.Destroy(itemView.gameObject);
+                    itemPool.Del(itemEntity);
+                }
             }
+        }
+        
+        private void CreateNewEntity(ItemCmp baseCmp)
+        {
+            var itemEntity = _defaultWorld.Value.NewEntity();
+            
+            ref var itemCmp = ref itemEntity.ConfigureItemEntity(_defaultWorld.Value);
+            
+            itemCmp.Cost = baseCmp.Cost;
+            itemCmp.Name = baseCmp.Name;
+            
+            itemCmp.ItemPlace = Place.Inventory;
+
+            var view = _itemPool.GetItem(itemCmp, _inventoryView.Value.Content);
+            
+            view.EcsEventWorld = _eventWorld.Value;
+            view.PackedEntityWithWorld = _defaultWorld.Value.PackEntityWithWorld(itemEntity);
+
+            var entity = _eventWorld.Value.NewEntity();
+            ref var eventComponent = ref _eventWorld.Value.GetPool<InventorEvent<ItemView>>().Add(entity);
+            eventComponent.View = view;
         }
     }
 }

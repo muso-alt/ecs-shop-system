@@ -1,9 +1,8 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace ShopComplex.Views
 {
-    public class BaseView : MonoBehaviour
+    public class BasePanelView : MonoBehaviour
     {
         [SerializeField] private RectTransform _content;
 

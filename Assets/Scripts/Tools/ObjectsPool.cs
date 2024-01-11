@@ -1,5 +1,4 @@
-﻿using Leopotam.EcsLite;
-using ShopComplex.Components;
+﻿using ShopComplex.Components;
 using ShopComplex.Views;
 using UnityEngine;
 

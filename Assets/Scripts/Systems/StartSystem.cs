@@ -24,11 +24,18 @@ namespace ShopComplex.Systems
             foreach (var item in _data.Value.Items)
             {
                 var itemEntity = _defaultWorld.Value.NewEntity();
+                
                 var itemsPool = _defaultWorld.Value.GetPool<ItemCmp>();
+                var dragPool = _defaultWorld.Value.GetPool<DragCmp>();
+                
                 ref var itemCmp = ref itemsPool.Add(itemEntity);
+                ref var dragCmp = ref dragPool.Add(itemEntity);
 
                 itemCmp.Cost = item.Price;
                 itemCmp.Name = item.Name;
+                itemCmp.ItemPlace = Place.Market;
+                
+                dragCmp.CanDrag = true;
 
                 var view = _itemPool.GetItem(itemCmp, _panelView.Value.Content);
                 

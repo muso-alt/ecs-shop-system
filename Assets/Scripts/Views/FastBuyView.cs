@@ -1,6 +1,6 @@
 ﻿namespace ShopComplex.Views
 {
-    public class FastBuyView : BaseView
+    public class FastBuyView : BasePanelView
     {
         
     }
