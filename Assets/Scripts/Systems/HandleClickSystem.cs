@@ -70,7 +70,7 @@ namespace ShopComplex.Systems
             view.PackedEntityWithWorld = _defaultWorld.Value.PackEntityWithWorld(itemEntity);
 
             var entity = _eventWorld.Value.NewEntity();
-            ref var eventComponent = ref _eventWorld.Value.GetPool<InventorEvent<ItemView>>().Add(entity);
+            ref var eventComponent = ref _eventWorld.Value.GetPool<InventoryEvent<ItemView>>().Add(entity);
             eventComponent.View = view;
         }
     }

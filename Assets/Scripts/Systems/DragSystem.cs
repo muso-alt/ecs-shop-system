@@ -91,9 +91,13 @@ namespace ShopComplex.Systems
                 
                 ref var itemCmp = ref itemPool.Get(itemEntity);
 
-                if (itemCmp.ItemPlace == Place.FastBuy)
+                switch (itemCmp.ItemPlace)
                 {
-                    continue;
+                    case Place.FastBuy:
+                        continue;
+                    case Place.Inventory:
+                        SendInventoryEntity(itemView);
+                        break;
                 }
 
                 if (_activeDragItem is null)
@@ -101,7 +105,7 @@ namespace ShopComplex.Systems
                     continue;
                 }
                 
-                if (_activeDragItem.Rect.IsInsideOtherRect(_fastBuyView.Value.Content) &&
+                if (_activeDragItem.Rect.IsInsideOtherRectByPosition(_fastBuyView.Value.Content) &&
                     itemCmp.ItemPlace == Place.Market)
                 {
                     CreateNewEntity(itemCmp);
@@ -127,6 +131,14 @@ namespace ShopComplex.Systems
                 
             view.EcsEventWorld = _eventWorld.Value;
             view.PackedEntityWithWorld = _defaultWorld.Value.PackEntityWithWorld(itemEntity);
+        }
+
+        private void SendInventoryEntity(ItemView view)
+        {
+            var entity = _eventWorld.Value.NewEntity();
+            ref var eventComponent = ref _eventWorld.Value.GetPool<InventoryEvent<ItemView>>().Add(entity);
+            eventComponent.View = view;
+            eventComponent.DraggedItem = _activeDragItem.Rect;
         }
     }
 }
