@@ -96,7 +96,10 @@ namespace ShopComplex.Systems
                     case Place.FastBuy:
                         continue;
                     case Place.Inventory:
-                        SendInventoryEntity(itemView);
+                        SendInventoryEntity(itemCmp, itemView);
+                        break;
+                    case Place.Market:
+                        SendFastBuyEntity(itemView);
                         break;
                 }
 
@@ -104,40 +107,27 @@ namespace ShopComplex.Systems
                 {
                     continue;
                 }
-                
-                if (_activeDragItem.Rect.IsInsideOtherRectByPosition(_fastBuyView.Value.Content) &&
-                    itemCmp.ItemPlace == Place.Market)
-                {
-                    CreateNewEntity(itemCmp);
-                }
-                
+
                 Object.Destroy(_activeDragItem.gameObject);
                 
                 _activeDragItem = null;
             }
         }
 
-        private void CreateNewEntity(ItemCmp baseCmp)
-        {
-            var itemEntity = _defaultWorld.Value.NewEntity();
-            
-            ref var itemCmp = ref itemEntity.ConfigureItemEntity(_defaultWorld.Value);
-            
-            itemCmp.Cost = baseCmp.Cost;
-            itemCmp.Name = baseCmp.Name;
-            itemCmp.ItemPlace = Place.FastBuy;
-
-            var view = _itemPool.GetItem(itemCmp, _fastBuyView.Value.Content);
-                
-            view.EcsEventWorld = _eventWorld.Value;
-            view.PackedEntityWithWorld = _defaultWorld.Value.PackEntityWithWorld(itemEntity);
-        }
-
-        private void SendInventoryEntity(ItemView view)
+        private void SendInventoryEntity(ItemCmp itemCmp, ItemView view)
         {
             var entity = _eventWorld.Value.NewEntity();
-            ref var eventComponent = ref _eventWorld.Value.GetPool<InventoryEvent<ItemView>>().Add(entity);
+            ref var eventComponent = ref _eventWorld.Value.GetPool<InventoryEvent<ItemCmp>>().Add(entity);
+            eventComponent.Item = itemCmp;
             eventComponent.View = view;
+            eventComponent.DraggedItem = _activeDragItem.Rect;
+        }
+
+        private void SendFastBuyEntity(ItemView view)
+        {
+            var entity = _eventWorld.Value.NewEntity();
+            ref var eventComponent = ref _eventWorld.Value.GetPool<FastBuyEvent<ItemView>>().Add(entity);
+            eventComponent.Item = view;
             eventComponent.DraggedItem = _activeDragItem.Rect;
         }
     }

@@ -29,6 +29,7 @@ namespace ShopComplex
             _systems.Add(new HandleClickSystem());
             _systems.Add(new DragSystem());
             _systems.Add(new InventorySystem());
+            _systems.Add(new FastBuySystem());
             
             _systems.AddWorld(new EcsWorld(), "events");  
             

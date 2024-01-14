@@ -20,8 +20,12 @@ namespace ShopComplex.Data
     {
         [SerializeField] private string _name;
         [SerializeField] private int _price;
+        [SerializeField] private bool _canCollect;
+        [SerializeField] private int _stackSize;
 
         public string Name => _name;
         public int Price => _price;
+        public bool CanCollect => _canCollect;
+        public int StackSize => _stackSize;
     }
 }
