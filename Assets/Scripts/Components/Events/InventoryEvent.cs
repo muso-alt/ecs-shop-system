@@ -1,10 +1,12 @@
-﻿using UnityEngine;
+﻿using ShopComplex.Views;
+using UnityEngine;
 
 namespace ShopComplex.Components
 {
-    public struct InventoryEvent<T> where T : MonoBehaviour
+    public struct InventoryEvent<T>
     {
-        public T View;
+        public T Item;
+        public ItemView View;
         public RectTransform DraggedItem;
     }
 }

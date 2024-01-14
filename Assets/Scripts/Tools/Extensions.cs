@@ -11,7 +11,6 @@ namespace ShopComplex.Tools
         {
             var itemsPool = ecsWorld.GetPool<ItemCmp>();
             ref var itemCmp = ref itemsPool.Add(entity);
-            itemCmp.ItemPlace = Place.FastBuy;
             return ref itemCmp;
         }
         
