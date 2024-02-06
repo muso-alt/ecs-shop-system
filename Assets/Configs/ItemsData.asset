@@ -14,7 +14,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _view: {fileID: 5313775137053661687, guid: 244381b8b9f59614abfbb4a50fd88073, type: 3}
   _items:
-  - _name: Tango
-    _price: 65
-  - _name: Iron branch
-    _price: 50
+  - <Name>k__BackingField: Tango
+    <Price>k__BackingField: 65
+    <CanCollect>k__BackingField: 1
+    <StackSize>k__BackingField: 0
+  - <Name>k__BackingField: Iron Branch
+    <Price>k__BackingField: 50
+    <CanCollect>k__BackingField: 0
+    <StackSize>k__BackingField: 0
+  - <Name>k__BackingField: Mango
+    <Price>k__BackingField: 70
+    <CanCollect>k__BackingField: 1
+    <StackSize>k__BackingField: 3
