@@ -1,6 +1,7 @@
 using Leopotam.EcsLite;
 using Leopotam.EcsLite.Di;
 using ShopComplex.Data;
+using ShopComplex.Services;
 using ShopComplex.Systems;
 using ShopComplex.Views;
 using UnityEngine;
@@ -9,6 +10,7 @@ namespace ShopComplex
 {
     public class EcsStartup : MonoBehaviour
     {
+        [SerializeField] private SceneService _sceneService;
         [SerializeField] private ItemsData _items;
         [SerializeField] private ShopPanelView _panelView;
         [SerializeField] private InventoryView _inventoryView;
@@ -30,6 +32,7 @@ namespace ShopComplex
             _systems.Add(new DragSystem());
             _systems.Add(new InventorySystem());
             _systems.Add(new FastBuySystem());
+            _systems.Add(new RequestSystem());
             
             _systems.AddWorld(new EcsWorld(), "events");  
             
@@ -38,6 +41,7 @@ namespace ShopComplex
             _systems.Inject(_inventoryView);
             _systems.Inject(_fastBuyView);
             _systems.Inject(_canvasParent);
+            _systems.Inject(_sceneService);
             
             _systems.Init();
         }

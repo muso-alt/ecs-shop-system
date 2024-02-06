@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using Leopotam.EcsLite;
 using Leopotam.EcsLite.Di;
 using ShopComplex.Components;
@@ -75,7 +74,7 @@ namespace ShopComplex.Systems
                     }
                     
                     continue;
-                }
+                } 
 
                 var view = GetItemView(itemCmp);
                 SetItemToPlace(view, i);
