@@ -1,12 +1,10 @@
 ﻿using System.Collections.Generic;
-using System.Text;
 using Cysharp.Threading.Tasks;
 using Leopotam.EcsLite;
 using Leopotam.EcsLite.Di;
 using Newtonsoft.Json;
 using ShopComplex.Data;
 using ShopComplex.Services;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Networking;
 
@@ -18,7 +16,8 @@ namespace ShopComplex.Systems
         private EcsCustomInject<SceneService> _sceneService;
 
         private UnityWebRequest _webRequest;
-        private string _jsonText;
+        private Container _container;
+        private List<ItemStruct> _items;
 
         public void Init(IEcsSystems systems)
         {
@@ -29,22 +28,28 @@ namespace ShopComplex.Systems
         {
             var json = await LoadRemoteJson();
 
-            _jsonText = json;
-            
-            /*var yamus = DeserializeYamus(json);
-            
-            Debug.Log(yamus.id + " | " + yamus.value);
-            yamus.value = "Hello World and: ";*/
-            
-            await PutSomeObjectAsync();
+            DeserializeContainer(json);
+
+            foreach (var item in _items)
+            {
+                Debug.Log(item.Name + " | " + item.Price);
+            }
+
+            //_items.Add(new ItemStruct("Bracer", 505, false, 0));
+
+            SerializeContainer();
+
+            await PostUpdate();
         }
 
         private async UniTask<string> LoadRemoteJson()
         {
-            var webRequest = new UnityWebRequest(_sceneService.Value.URL, "GET");
+            var webRequest = new UnityWebRequest(_sceneService.Value.URL + "?id=1", "GET")
+            {
+                downloadHandler = new DownloadHandlerBuffer()
+            };
 
-            webRequest.downloadHandler = new DownloadHandlerBuffer();
-            webRequest.SetRequestHeader("Content-Type", "application/json");
+            webRequest.SetRequestHeader("Content-Type", "multipart/form-data");
             webRequest.SetRequestHeader("Authorization", "Bearer " + _sceneService.Value.AccessToken);
             
             await webRequest.SendWebRequest();
@@ -61,19 +66,14 @@ namespace ShopComplex.Systems
             return jsonText;
         }
 
-        private async UniTask PutSomeObjectAsync()
+        private async UniTask PostUpdate()
         {
-            //var jsonText = JsonConvert.SerializeObject(yamus);
-            var jsonRaw = Encoding.UTF8.GetBytes(_jsonText);
-            Debug.Log(_jsonText);
+            var form = new WWWForm();
+            form.AddField("value", _container.value);
 
-            var webRequest = new UnityWebRequest(_sceneService.Value.URL + "?id=1", "POST");
-            
-            //webRequest.SetRequestHeader("app-id", "65c25c2cf2fcff03026d959d");
-            webRequest.uploadHandler = new UploadHandlerRaw(jsonRaw);
+            var webRequest = UnityWebRequest.Post(_sceneService.Value.URL + $"?id={_container.id}", form);
+        
             webRequest.downloadHandler = new DownloadHandlerBuffer();
-            
-            webRequest.SetRequestHeader("Content-Type", "application/json");
             webRequest.SetRequestHeader("Authorization", "Bearer " + _sceneService.Value.AccessToken);
 
             await webRequest.SendWebRequest();
@@ -88,15 +88,25 @@ namespace ShopComplex.Systems
             }
         }
 
-        private Yamus DeserializeYamus(string json)
+        private void DeserializeContainer(string json)
         {
-            return JsonConvert.DeserializeObject<Yamus>(json);
+            _container = JsonConvert.DeserializeObject<Container>(json);
+
+            if (_container != null)
+            {
+                _items = JsonConvert.DeserializeObject<List<ItemStruct>>(_container.value);
+            }
+        }
+        
+        private void SerializeContainer()
+        {
+            _container.value = JsonConvert.SerializeObject(_items);
         }
     }
     
-    public class Yamus
+    public class Container
     {
-        public Yamus(int id, string value)
+        public Container(int id, string value)
         {
             this.id = id;
             this.value = value;
@@ -108,4 +118,5 @@ namespace ShopComplex.Systems
         [JsonProperty]
         public string value { get; set; }
     }
+
 }
