@@ -1,7 +1,7 @@
 ﻿using Leopotam.EcsLite;
 using Leopotam.EcsLite.Di;
 using ShopComplex.Components;
-using ShopComplex.Data;
+using ShopComplex.Services;
 using ShopComplex.Tools;
 using ShopComplex.Views;
 
@@ -9,19 +9,17 @@ namespace ShopComplex.Systems
 {
     public class StartSystem : IEcsInitSystem
     {
-        private EcsCustomInject<ItemsData> _data;
+        private EcsCustomInject<SceneService> _sceneService;
         private ObjectsPool<ItemView> _itemPool;
-        
-        private EcsCustomInject<ShopPanelView> _panelView;
         
         private readonly EcsWorldInject _defaultWorld = default;
         private readonly EcsWorldInject _eventWorld = "events";
         
         public void Init(IEcsSystems systems)
         {
-            _itemPool = new ObjectsPool<ItemView>(_data.Value.View);
+            _itemPool = new ObjectsPool<ItemView>(_sceneService.Value.Data.View);
             
-            foreach (var item in _data.Value.Items)
+            foreach (var item in _sceneService.Value.Data.Items)
             {
                 var itemEntity = _defaultWorld.Value.NewEntity();
                 
@@ -37,7 +35,7 @@ namespace ShopComplex.Systems
                 
                 dragCmp.CanDrag = true;
 
-                var view = _itemPool.GetItem(itemCmp, _panelView.Value.Content);
+                var view = _itemPool.GetItem(itemCmp, _sceneService.Value.ShopPanel.Content);
                 
                 view.EcsEventWorld = _eventWorld.Value;
                 view.PackedEntityWithWorld = _defaultWorld.Value.PackEntityWithWorld(itemEntity);
