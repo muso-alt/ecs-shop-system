@@ -2,7 +2,7 @@
 using Leopotam.EcsLite;
 using Leopotam.EcsLite.Di;
 using ShopComplex.Components;
-using ShopComplex.Data;
+using ShopComplex.Services;
 using ShopComplex.Tools;
 using ShopComplex.Views;
 using UnityEngine;
@@ -11,9 +11,8 @@ namespace ShopComplex.Systems
 {
     public class InventorySystem : IEcsInitSystem, IEcsRunSystem
     {
-        private EcsCustomInject<InventoryView> _inventorView;
         private ObjectsPool<ItemView> _itemPool;
-        private EcsCustomInject<ItemsData> _data;
+        private EcsCustomInject<SceneService> _sceneService;
         
         private readonly EcsFilterInject<Inc<InventoryEvent<ItemCmp>>> _inventorFilter = "events";
         private readonly Dictionary<int, ItemView> _inventoryByIndex = new Dictionary<int, ItemView>();
@@ -23,12 +22,12 @@ namespace ShopComplex.Systems
         
         public void Init(IEcsSystems systems)
         {
-            for (var i = 0; i < _inventorView.Value.Places.Length; i++)
+            for (var i = 0; i < _sceneService.Value.Inventory.Places.Length; i++)
             {
                 _inventoryByIndex.Add(i, null);
             }
             
-            _itemPool = new ObjectsPool<ItemView>(_data.Value.View);
+            _itemPool = new ObjectsPool<ItemView>(_sceneService.Value.Data.View);
         }
         
         public void Run(IEcsSystems systems)
@@ -68,7 +67,7 @@ namespace ShopComplex.Systems
 
                         if (cmp.Name == itemCmp.Name)
                         {
-                            _inventorView.Value.Places[i].SetCount(2);
+                            _sceneService.Value.Inventory.Places[i].SetCount(2);
                             break;
                         }
                     }
@@ -93,7 +92,7 @@ namespace ShopComplex.Systems
             
             itemCmp.ItemPlace = Place.Inventory;
 
-            var view = _itemPool.GetItem(itemCmp, _inventorView.Value.Content);
+            var view = _itemPool.GetItem(itemCmp, _sceneService.Value.Inventory.Content);
             
             view.EcsEventWorld = _eventWorld.Value;
             view.PackedEntityWithWorld = _defaultWorld.Value.PackEntityWithWorld(itemEntity);
@@ -107,7 +106,7 @@ namespace ShopComplex.Systems
         {
             for (var i = 0; i < _inventoryByIndex.Count; i++)
             {
-                var place = _inventorView.Value.Places[i];
+                var place = _sceneService.Value.Inventory.Places[i];
 
                 if (!dragItem.IsInsideOtherRectByPosition(place.Place))
                 {
@@ -149,7 +148,7 @@ namespace ShopComplex.Systems
 
         private void SetItemToPlace(ItemView view, int index)
         {
-            view.Rect.SetParent(_inventorView.Value.Places[index].Place);
+            view.Rect.SetParent(_sceneService.Value.Inventory.Places[index].Place);
             view.Rect.anchoredPosition = Vector2.zero;
 
             for (var i = 0; i < _inventoryByIndex.Count; i++)

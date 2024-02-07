@@ -11,12 +11,7 @@ namespace ShopComplex
     public class EcsStartup : MonoBehaviour
     {
         [SerializeField] private SceneService _sceneService;
-        [SerializeField] private ItemsData _items;
-        [SerializeField] private ShopPanelView _panelView;
-        [SerializeField] private InventoryView _inventoryView;
-        [SerializeField] private FastBuyView _fastBuyView;
-        [SerializeField] private Transform _canvasParent;
-        
+
         private EcsWorld _world;
         private IEcsSystems _systems;
 
@@ -34,13 +29,8 @@ namespace ShopComplex
             _systems.Add(new FastBuySystem());
             _systems.Add(new RequestSystem());
             
-            _systems.AddWorld(new EcsWorld(), "events");  
+            _systems.AddWorld(new EcsWorld(), "events");
             
-            _systems.Inject(_items);
-            _systems.Inject(_panelView);
-            _systems.Inject(_inventoryView);
-            _systems.Inject(_fastBuyView);
-            _systems.Inject(_canvasParent);
             _systems.Inject(_sceneService);
             
             _systems.Init();

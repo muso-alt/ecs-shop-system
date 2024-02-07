@@ -3,6 +3,7 @@ using Cysharp.Threading.Tasks;
 using Leopotam.EcsLite;
 using Leopotam.EcsLite.Di;
 using Newtonsoft.Json;
+using ShopComplex.Containers;
 using ShopComplex.Data;
 using ShopComplex.Services;
 using UnityEngine;
@@ -12,7 +13,6 @@ namespace ShopComplex.Systems
 {
     public class RequestSystem : IEcsInitSystem
     {
-        private EcsCustomInject<ItemsData> _data;
         private EcsCustomInject<SceneService> _sceneService;
 
         private UnityWebRequest _webRequest;
@@ -103,20 +103,4 @@ namespace ShopComplex.Systems
             _container.value = JsonConvert.SerializeObject(_items);
         }
     }
-    
-    public class Container
-    {
-        public Container(int id, string value)
-        {
-            this.id = id;
-            this.value = value;
-        }
-        
-        [JsonProperty]
-        public int id { get; set; }
-        
-        [JsonProperty]
-        public string value { get; set; }
-    }
-
 }

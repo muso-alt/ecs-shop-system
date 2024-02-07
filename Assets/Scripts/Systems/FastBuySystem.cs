@@ -1,7 +1,7 @@
 ﻿using Leopotam.EcsLite;
 using Leopotam.EcsLite.Di;
 using ShopComplex.Components;
-using ShopComplex.Data;
+using ShopComplex.Services;
 using ShopComplex.Tools;
 using ShopComplex.Views;
 
@@ -9,8 +9,7 @@ namespace ShopComplex.Systems
 {
     public class FastBuySystem : IEcsInitSystem, IEcsRunSystem
     {
-        private EcsCustomInject<FastBuyView> _fastBuyView;
-        private EcsCustomInject<ItemsData> _data;
+        private EcsCustomInject<SceneService> _sceneService;
         private ObjectsPool<ItemView> _itemPool;
         
         private readonly EcsWorldInject _eventWorld = "events";
@@ -20,7 +19,7 @@ namespace ShopComplex.Systems
         
         public void Init(IEcsSystems systems)
         {
-            _itemPool = new ObjectsPool<ItemView>(_data.Value.View);
+            _itemPool = new ObjectsPool<ItemView>(_sceneService.Value.Data.View);
         }
         
         public void Run(IEcsSystems systems)
@@ -43,7 +42,7 @@ namespace ShopComplex.Systems
                 
                 ref var itemCmp = ref itemPool.Get(itemEntity);
                 
-                if (draggedItem.IsInsideOtherRectByPosition(_fastBuyView.Value.Content) &&
+                if (draggedItem.IsInsideOtherRectByPosition(_sceneService.Value.FastBuy.Content) &&
                     itemCmp.ItemPlace == Place.Market)
                 {
                     CreateNewEntity(itemCmp);
@@ -61,7 +60,7 @@ namespace ShopComplex.Systems
             itemCmp.Name = baseCmp.Name;
             itemCmp.ItemPlace = Place.FastBuy;
 
-            var view = _itemPool.GetItem(itemCmp, _fastBuyView.Value.Content);
+            var view = _itemPool.GetItem(itemCmp, _sceneService.Value.FastBuy.Content);
                 
             view.EcsEventWorld = _eventWorld.Value;
             view.PackedEntityWithWorld = _defaultWorld.Value.PackEntityWithWorld(itemEntity);

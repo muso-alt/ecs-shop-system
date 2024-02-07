@@ -8,8 +8,6 @@ namespace ShopComplex.Systems
 {
     public class HandleClickSystem : IEcsRunSystem
     {
-        private EcsCustomInject<InventoryView> _inventoryView;
-        
         private readonly EcsWorldInject _eventWorld = "events";
         private readonly EcsFilterInject<Inc<ClickEvent<ItemView>>> _clickFilter = "events";
 
